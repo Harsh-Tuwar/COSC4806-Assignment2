@@ -1,16 +1,17 @@
 <?php
   session_start();
-  require_once 'database.php';
-  require_once 'user.php';
 
   if (!isset($_SESSION['failed_attempts'])) {
       $_SESSION['failed_attempts'] = 0;
   }
 
   if (isset($_SESSION['authenticated']) && $_SESSION['authenticated'] === true) {
-      header('Location: index.php');
+      ?> here <?php
+        header('Location: index.php');
       exit();
   }
+
+  require 'user.php';
 
   $error = '';
 
@@ -37,7 +38,6 @@
   }
 ?>
 
-<!-- HTML Form remains the same -->
 <form action="login.php" method="post">
   <?php if ($error): ?>
       <p style="color:red;"><?= htmlspecialchars($error) ?></p>
