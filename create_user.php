@@ -1,26 +1,26 @@
 <?php
-require_once 'user.php';
-
-$error = '';
-$success = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username'] ?? '');
-    $password = $_POST['password'] ?? '';
-
-    if ($username === '' || $password === '') {
-        $error = "Username and password are required.";
-    } else {
-        $user = new User();
-        $result = $user->create_user($username, $password);
-
-        if ($result['success']) {
-            $success = $result['message'] . ' <a href="login.php">Login here</a>.';
+    require_once 'user.php';
+    
+    $error = '';
+    $success = '';
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $username = trim($_POST['username'] ?? '');
+        $password = $_POST['password'] ?? '';
+        
+        if ($username === '' || $password === '') {
+            $error = "Username and password are required.";
         } else {
-            $error = $result['message'];
+            $user = new User();
+            $result = $user->create_user($username, $password);
+    
+            if ($result['success']) {
+                $success = $result['message'] . ' <a href="login.php">Login here</a>.';
+            } else {
+                $error = $result['message'];
+            }
         }
     }
-}
 ?>
 
 <!DOCTYPE html>

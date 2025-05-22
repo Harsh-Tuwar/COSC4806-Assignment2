@@ -49,6 +49,26 @@ Class User {
     }
   }
 
+  public function login($username, $password) {
+    $conn = db_connect();
+
+    // Fetch the user's hashed password
+    $query = 'SELECT * FROM users WHERE username = :username';
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':username', $username);
+    $stmt->execute();
+
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user && password_verify($password, $user['password'])) {
+        // Login successful
+        return ['success' => true, 'message' => 'Login successful.', 'user' => $user];
+    } else {
+        // Login failed
+        return ['success' => false, 'message' => 'Invalid username or password.'];
+    }
+  }
+
 // Helper function for password validation
   private function is_valid_password($password) {
     $minLength = 8;
