@@ -6,7 +6,7 @@ Class User {
   public function get_all_users() {
     $conn = db_connect();
 
-    $query = 'SELECT * FROM users';
+    $query = 'SELECT * FROM users;';
     $stmt = $conn->prepare($query);
     $stmt->execute();
 

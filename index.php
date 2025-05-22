@@ -1,8 +1,10 @@
-<html>
-  <head>
-    <title>PHP Test</title>
-  </head>
-  <body>
-    <?php echo '<p>Hello World</p>'; ?> 
+<?php
+  require_once 'user.php';
 
-</html>
+  $user = new User();
+
+  $users = $user->get_all_users();
+
+  print_r($users)
+
+?>
