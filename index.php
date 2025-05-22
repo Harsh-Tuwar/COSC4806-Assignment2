@@ -1,11 +1,5 @@
 <?php
   session_start();
-
-  require_once 'user.php';
-  
-  $user = new User();
-  
-  $users = $user->get_all_users();
   
   // echo '<pre>';
   // print_r($users)
@@ -21,8 +15,14 @@
       exit();
   }
 
+  require_once 'user.php';
+
   $username = $_SESSION['username'];
   $date = date("l, F j, Y");
+  
+  $user = new User();
+  
+  $users = $user->get_all_users();
 ?>
 
 <!DOCTYPE html>
