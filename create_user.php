@@ -1,48 +1,26 @@
 <?php
-    require_once 'database.php'; // Ensure this returns a PDO instance
+require_once 'user.php';
 
-    $error = '';
-    $success = '';
+$error = '';
+$success = '';
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $username = trim($_POST['username'] ?? '');
-        $password = $_POST['password'] ?? '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = trim($_POST['username'] ?? '');
+    $password = $_POST['password'] ?? '';
 
-        if ($username === '' || $password === '') {
-            $error = "Username and password are required.";
-        } elseif (strlen($password) < 8 || !preg_match('/[A-Z]/', $password) 
-              || !preg_match('/[a-z]/', $password) || !preg_match('/\d/', $password)) {
-            $error = "Password must be at least 8 characters long and include uppercase, lowercase, and a number.";
+    if ($username === '' || $password === '') {
+        $error = "Username and password are required.";
+    } else {
+        $user = new User();
+        $result = $user->create_user($username, $password);
+
+        if ($result['success']) {
+            $success = $result['message'] . ' <a href="login.php">Login here</a>.';
         } else {
-        
-            try {
-            
-                $conn = db_connect();
-
-                // Check if username exists
-                $stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE username = :username");
-                $stmt->bindParam(':username', $username);
-                $stmt->execute();
-                $exists = $stmt->fetchColumn();
-    
-                if ($exists) {
-                    $error = "Username already exists. Please choose another.";
-                } else {
-                    // Hash password and insert new user
-                    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-    
-                    $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (:username, :password)");
-                    $stmt->bindParam(':username', $username);
-                    $stmt->bindParam(':password', $hashedPassword);
-                    $stmt->execute();
-    
-                    $success = "Account created successfully. You can now <a href='login.php'>log in</a>.";
-                }
-            } catch (PDOException $e) {
-                $error = "Database error: " . $e->getMessage();
-            }
+            $error = $result['message'];
         }
     }
+}
 ?>
 
 <!DOCTYPE html>
@@ -67,9 +45,10 @@
 
         <label for="password">Password:</label><br>
         <input type="password" name="password" required><br>
-        <small>Password must be at least 8 characters with upper/lowercase and a number.</small>
-        <br>        
-        <br>
+        <small>
+            Password must be at least 8 characters and include uppercase, lowercase, number, and                 special character.
+        </small><br><br>
+
         <button type="submit">Create Account</button>
     </form>
 </body>
