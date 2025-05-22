@@ -14,5 +14,16 @@ Class User {
 
     return $users;
   }
+
+  public function create_user($username, $password) {
+    $conn = db_connect();
+    $query = 'INSERT INTO users (username, password) VALUES (:username, :password);';
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':username', $username);
+    $stmt->bindParam(':password', $password);
+    $stmt->execute();
+  
+    return $stmt->rowCount();  
+  }
 }
 ?>

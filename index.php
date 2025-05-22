@@ -5,6 +5,7 @@
 
   $users = $user->get_all_users();
 
+  echo '<pre>';
   print_r($users)
 
 ?>
