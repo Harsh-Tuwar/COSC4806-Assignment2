@@ -1,44 +1,53 @@
 <?php
-  $valid_uname = "harsh";
-  $valid_pwd = "harsh123";
-
   session_start();
+  require_once 'database.php';
 
   if (!isset($_SESSION['failed_attempts'])) {
-      $_SESSION['failed_attempts'] = 0; // init with 0
+      $_SESSION['failed_attempts'] = 0;
   }
 
-  if (isset($_SESSION['authenticated']) && isset($_SESSION['authenticated']) == true) {
-    header('Location: index.php');
-    exit();
+  if (isset($_SESSION['authenticated']) && $_SESSION['authenticated'] === true) {
+      header('Location: index.php');
+     exit();
   }
 
   $error = '';
 
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'] ?? "";;
-    $password = $_POST['password'] ?? "";
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
 
-    if ($username != "" && $password != "") {
-     if ($username == $valid_uname && $password == $valid_pwd) {
-       $_SESSION['authenticated'] = true;
-       $_SESSION['username'] = $username;
-       // echo "Login successful!";
-       header('Location: index.php');
-       exit();
-     } else {
-       $_SESSION['failed_attempts'] = $_SESSION['failed_attempts'] + 1;
-       $error = 'Invalid username or password.';
-     }
+    if ($username !== '' && $password !== '') {
+        try {
+            $conn = db_connect();
+            $stmt = $conn->prepare("SELECT * FROM users WHERE username = :username");
+            $stmt->bindParam(':username', $username);
+            $stmt->execute();
+
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($user && password_verify($password, $user['password'])) {
+                $_SESSION['authenticated'] = true;
+                $_SESSION['username'] = $user['username'];
+                header('Location: index.php');
+                exit();
+            } else {
+                $_SESSION['failed_attempts'] += 1;
+                $error = 'Invalid username or password.';
+            }
+        } catch (PDOException $e) {
+            $error = "Database error: " . $e->getMessage();
+        }
     } else {
-      $error="Please enter username and password";
+        $error = "Please enter username and password.";
     }
   }
 ?>
 
+<!-- HTML Form remains the same -->
 <form action="login.php" method="post">
   <?php if ($error): ?>
-      <p style="color:red;"><?= $error ?></p>
+      <p style="color:red;"><?= htmlspecialchars($error) ?></p>
   <?php endif; ?>
   <?php 
     echo "Failed Attempts: ";
