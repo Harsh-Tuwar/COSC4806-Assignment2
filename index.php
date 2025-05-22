@@ -1,14 +1,14 @@
 <?php
+  session_start();
+
   require_once 'user.php';
   
   $user = new User();
   
   $users = $user->get_all_users();
   
-  echo '<pre>';
-  print_r($users)
-    
-  session_start();
+  // echo '<pre>';
+  // print_r($users)
 
   // Redirect to login if not authenticated
   if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
@@ -33,6 +33,11 @@
 <body>
     <h1>Welcome, <?= htmlspecialchars($username) ?>!</h1>
     <p>Today's date is <?= $date ?>.</p>
+    <pre>
+        <?php
+            print_r($users);
+        ?>
+    </pre>
     <a href="logout.php">Logout</a>
 </body>
 </html>
