@@ -64,4 +64,6 @@
 
     <button type="submit">Login</button>
   </div>
+  <br />
+  <a href="create_user.php">Create Account</a>
 </form>
