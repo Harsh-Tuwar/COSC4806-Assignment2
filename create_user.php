@@ -50,6 +50,10 @@
         </small><br><br>
 
         <button type="submit">Create Account</button>
+
+        <br />
+        
+        <a href="login.php">Login</a>
     </form>
 </body>
 </html>

@@ -6,8 +6,7 @@
   }
 
   if (isset($_SESSION['authenticated']) && $_SESSION['authenticated'] === true) {
-      ?> here <?php
-        header('Location: index.php');
+      header('Location: index.php');
       exit();
   }
 
@@ -26,6 +25,10 @@
           if ($result['success']) {
               $_SESSION['authenticated'] = true;
               $_SESSION['username'] = $result['user']['username'];
+              if (headers_sent($file, $line)) {
+                  echo "Headers already sent in $file on line $line";
+                  exit;
+              }
               header('Location: index.php');
               exit();
           } else {
